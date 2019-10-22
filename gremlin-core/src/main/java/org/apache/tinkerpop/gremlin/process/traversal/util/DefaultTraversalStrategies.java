@@ -18,13 +18,13 @@
  */
 package org.apache.tinkerpop.gremlin.process.traversal.util;
 
-import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategy;
 import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -70,19 +70,17 @@ public class DefaultTraversalStrategies implements TraversalStrategies {
     }
 
     @Override
+    public Iterator<TraversalStrategy<?>> toIterator() {
+        return this.traversalStrategies.iterator();
+    }
+
+    @Override
     public <T extends TraversalStrategy> Optional<T> getStrategy(final Class<T> traversalStrategyClass) {
         for (final TraversalStrategy<?> traversalStrategy : this.traversalStrategies) {
             if (traversalStrategyClass.isAssignableFrom(traversalStrategy.getClass()))
                 return (Optional) Optional.of(traversalStrategy);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void applyStrategies(final Traversal.Admin<?, ?> traversal) {
-        for (final TraversalStrategy<?> traversalStrategy : this.traversalStrategies) {
-            traversalStrategy.apply(traversal);
-        }
     }
 
     @Override

@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +70,14 @@ public interface TraversalStrategies extends Serializable, Cloneable {
     static List<Class<? extends TraversalStrategy>> STRATEGY_CATEGORIES = Collections.unmodifiableList(Arrays.asList(TraversalStrategy.DecorationStrategy.class, TraversalStrategy.OptimizationStrategy.class, TraversalStrategy.ProviderOptimizationStrategy.class, TraversalStrategy.FinalizationStrategy.class, TraversalStrategy.VerificationStrategy.class));
 
     /**
-     * Return all the {@link TraversalStrategy} singleton instances associated with this {@link TraversalStrategies}.
+     * Return all the {@link TraversalStrategy} instances associated with this {@link TraversalStrategies}.
      */
     public List<TraversalStrategy<?>> toList();
+
+    /**
+     * Return all the {@link TraversalStrategy} instances associated with this {@link TraversalStrategies}.
+     */
+    public Iterator<TraversalStrategy<?>> toIterator();
 
     /**
      * Return the {@link TraversalStrategy} instance associated with the provided class.
@@ -83,14 +89,6 @@ public interface TraversalStrategies extends Serializable, Cloneable {
     public default <T extends TraversalStrategy> Optional<T> getStrategy(final Class<T> traversalStrategyClass) {
         return (Optional) toList().stream().filter(s -> traversalStrategyClass.isAssignableFrom(s.getClass())).findAny();
     }
-
-    /**
-     * Apply all the {@link TraversalStrategy} optimizers to the {@link Traversal}. This method must ensure that the
-     * strategies are sorted prior to application.
-     *
-     * @param traversal the traversal to apply the strategies to
-     */
-    public void applyStrategies(final Traversal.Admin<?, ?> traversal);
 
     /**
      * Add all the provided {@link TraversalStrategy} instances to the current collection.
